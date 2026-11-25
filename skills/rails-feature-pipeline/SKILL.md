@@ -1,6 +1,6 @@
 ---
 name: rails-feature-pipeline
-description: End-to-end implementation of a feature in a Rails project: verify the required model attributes exist and migrate with `rails generate migration` when they don't, write tests (integration for API and multi-layer features, unit for simple model changes), update the OpenAPI spec for every endpoint change, run the full test suite, then have a reviewer subagent check the implementation. Use when the user asks to implement, add, or change a feature, endpoint, model attribute, or migration.
+description: End-to-end implementation of a feature in a Rails project: verify the required model attributes exist and migrate with `rails generate migration` when they don't, write tests (integration for API and multi-layer features, unit for simple model changes), update the OpenAPI spec for every endpoint change, run the full test suite, lint with RuboCop when the project has it, then have a reviewer subagent check the implementation. Use when the user asks to implement, add, or change a feature, endpoint, model attribute, or migration.
 ---
 
 # Rails Feature Pipeline
@@ -71,11 +71,19 @@ Any endpoint added, changed, or removed → update the project's OpenAPI spec (c
 
 **Criterion:** spec parses (e.g. `ruby -e 'require "yaml"; YAML.load_file("docs/openapi.yml")'`) and describes the new contract.
 
-## 5. Full suite green
+## 5. Lint and full suite green
 
-Run the touched test files first, then the whole suite (`bin/rails test` or the project's runner). Leave it at zero failures and zero errors.
+If the project has RuboCop installed (a `rubocop` or `rubocop-rails` entry in the Gemfile, a `.rubocop.yml`, or a `bin/rubocop` binstub), lint the files you touched and fix what it reports:
 
-**Criterion:** full suite passes.
+```sh
+bin/rubocop app/controllers/charges_controller.rb test/integration/charges_test.rb
+```
+
+No binstub? Use `bundle exec rubocop`. If the project lints the whole tree before committing, run the bare `bin/rubocop` too. Fix offenses in code, never by disabling cops or widening the excludes; if a cop is genuinely wrong for this code, leave the config alone and say so in the summary. Skip this when no linter is present, and do not add RuboCop to a project that does not have it.
+
+Then run the touched test files first, then the whole suite (`bin/rails test` or the project's runner). Leave it at zero failures, zero errors, and no new lint offenses.
+
+**Criterion:** full suite passes and the touched files are lint-clean (or the project has no linter).
 
 ## 6. Reviewer subagent
 
