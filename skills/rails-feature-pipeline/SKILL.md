@@ -1,6 +1,6 @@
 ---
 name: rails-feature-pipeline
-description: End-to-end implementation of a feature in a Rails project: verify the required model attributes exist and migrate with `rails generate migration` when they don't, write tests (integration for API and multi-layer features, unit for simple model changes), update the OpenAPI spec for every endpoint change, run the full test suite, lint with RuboCop when the project has it, then have a reviewer subagent check the implementation. Use when the user asks to implement, add, or change a feature, endpoint, model attribute, or migration.
+description: "End-to-end implementation of a feature in a Rails project: verify the required model attributes exist and migrate with `rails generate migration` when they don't, write tests (integration for API and multi-layer features, unit for simple model changes), update the OpenAPI spec for every endpoint change, run the full test suite, lint with RuboCop when the project has it, then have a reviewer subagent check the implementation. Use when the user asks to implement, add, or change a feature, endpoint, model attribute, or migration."
 ---
 
 # Rails Feature Pipeline
