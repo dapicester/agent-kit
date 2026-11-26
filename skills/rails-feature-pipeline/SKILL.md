@@ -1,6 +1,6 @@
 ---
 name: rails-feature-pipeline
-description: "End-to-end implementation of a feature in a Rails project: verify the required model attributes exist and migrate with `rails generate migration` when they don't, write tests (integration for API and multi-layer features, unit for simple model changes), update the OpenAPI spec for every endpoint change, run the full test suite, lint with RuboCop when the project has it, then have a reviewer subagent check the implementation. Use when the user asks to implement, add, or change a feature, endpoint, model attribute, or migration."
+description: "End-to-end implementation of a feature in a Rails project: verify the required model attributes exist and migrate with `rails generate migration` when they don't, write tests (integration for API and multi-layer features, unit for simple model changes), update the OpenAPI spec for every endpoint change, run the full test suite, lint with RuboCop when the project has it, have a reviewer subagent check the implementation, and refresh the AI context snapshot (`rails ai:context`) when the project generates one. Use when the user asks to implement, add, or change a feature, endpoint, model attribute, or migration."
 ---
 
 # Rails Feature Pipeline
@@ -93,6 +93,6 @@ Dispatch a reviewer subagent to check the implementation: run the relevant tests
 
 ## 7. Update the AI context, if the project has one
 
-If the project regenerates an AI context snapshot (a rake task such as `bin/rails ai:context`, a `rails-ai-context` install, any generated `AGENTS.md` / `CLAUDE.md` / rules directory), run it so the next session sees the new models, routes, and controllers instead of a stale snapshot. Skip this step when no such task exists; do not invent one.
+If the project regenerates an AI context snapshot (a rake task such as `bin/rails ai:context`, a `rails-ai-context` install, any generated `AGENTS.md` / `CLAUDE.md` / rules directory), run it so the next session sees the new models, routes, and controllers instead of a stale snapshot, and commit the regenerated files together with (or right after) the feature — a snapshot only useful on your machine helps no one. Verify the generator touched only its managed marker blocks, never the hand-written sections of those files. Skip this step when no such task exists; do not invent one.
 
-**Criterion:** either the command completes and the regenerated files mention the models, controllers, and routes touched by this change, or the step is skipped with a one-line note saying the project has no context task.
+**Criterion:** either the command completes, the regenerated files mention the models, controllers, and routes touched by this change and are committed, or the step is skipped with a one-line note saying the project has no context task.
